@@ -1,1 +1,55 @@
-const RegistrationComp = () =>
+import { useState } from 'react'
+import './RegistrationComp.css'
+const RegistrationComp = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [result, setResult] = useState('Autor: XXXXXXXXX');
+    function handleRegistration() {
+        //alert(`Email: ${email}, Hasło: ${password}, Powtórzone hasło: ${confirmPassword}`);
+        if(!email.includes('@')) {
+            setResult('Niepoprawny email');
+            return;
+        }
+        if(password.length < 6) {
+            setResult('Hasło musi mieć co najmniej 6 znaków');
+            return;
+        }
+        if(password !== confirmPassword) {
+            setResult('Hasła nie są takie same');
+            return;
+        }
+        setResult('Rejestracja zakończona sukcesem');
+    }
+
+    return (
+        <section className="registration">
+            <h2>Rejestruj konto</h2>
+            <label htmlFor="email">
+                Podaj email:
+            </label>
+            <input id="email" type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Wpisz email" />
+           
+            <label htmlFor="password">
+                Podaj hasło:
+            </label>
+            <input id="password" type="password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Wpisz hasło" />
+            <label htmlFor="password">
+                Powtórz hasło:
+            </label>
+            <input id="passwordRepeat" type="password" 
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Wpisz hasło" />
+            <button onClick={() => handleRegistration()}>ZATWIERDŹ</button>
+            <section>{result}</section>
+        </section>
+    )
+}
+export default RegistrationComp
