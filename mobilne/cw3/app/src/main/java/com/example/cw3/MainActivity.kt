@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             // odswiezenie ListView
             adapterList.notifyDataSetChanged()
 
-            // wyczyszczenie pola
+            // wyczyszczenie pol
             editNote.text.clear()
         }
     }
