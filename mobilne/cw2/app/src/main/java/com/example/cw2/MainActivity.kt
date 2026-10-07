@@ -12,6 +12,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+    private var isUpdateMode = false
+    private var indexToUpdate = -1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,28 +23,60 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val editContact = findViewById<EditText>(R.id.editContact)
         val btnAdd = findViewById<Button>(R.id.addButton)
-        val listContact = findViewById<ListView>(R.id.listViewContacts)
+        val listContacts = findViewById<ListView>(R.id.listViewContacts)
         //zdefiniowanie adaptera
         val adapterList = ArrayAdapter<String>(
-            this,android.R.layout.simple_list_item_1,contacts
+            this, android.R.layout.simple_list_item_1, contacts
         )
-        //podpiecie adaptera do list view
-        listContact.adapter = adapterList
-        //dodawanie do list view
+        //podpiecie adaptera do ListView
+        listContacts.adapter = adapterList
+
+        //dodawanie do listView
         btnAdd.setOnClickListener {
-            val newContact = editContact.text.trim()
-            if (newContact.isEmpty()){
-                Toast.makeText(this, "brak danych", Toast.LENGTH_SHORT).show()
-            }else{
-                //dodanie do list string
-                contacts.add(newContact)
+            val newContact = editContact.text.toString().trim()
+            if (newContact.isEmpty()) {
+                Toast.makeText(
+                    this, "Brak danych",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                //dodanie do listy String
+                if(isUpdateMode) {
+                    // aktualizacja istniejącego kontaktu
+                    contacts[indexToUpdate] = newContact
+                } else {
+                    // dodanie nowego kontaktu
+                    contacts.add(newContact)
+                }
+                isUpdateMode = false
+                indexToUpdate = -1
+                btnAdd.text = "Dodaj"
+                //wymuszenie przeładowania ListView
                 adapterList.notifyDataSetChanged()
                 editContact.text.clear()
+
             }
         }
-        listContact.setOnClickListener { parent,view,position }
+        //usuwanie z listy na kliknięcie elemntu listy
+        listContacts.setOnItemClickListener { parent, view, position, id ->
+
+            Toast.makeText(
+                this, "kliknieto element o id: $id",
+                Toast.LENGTH_SHORT
+            ).show()
+            contacts.removeAt(id.toInt())
+            adapterList.notifyDataSetChanged()
+        }
+        listContacts.setOnItemLongClickListener { _, _, position, _ ->
+            editContact.setText(contacts[position])
+            btnAdd.text = "Zmień"
+            isUpdateMode = true
+            indexToUpdate = position
+            true
+        }
 
     }
 }
